@@ -104,19 +104,19 @@ export default function Calendar() {
         <Text style={styles.navText}>◀</Text>
         </Pressable>
         <Text style={styles.monthText}>
-        {currentDate.toLocaleString("default", { month: "long" })}{" "}
-        {currentDate.getFullYear()}
+          {currentDate.toLocaleString("default", { month: "long" })}{" "}
+          {currentDate.getFullYear()}
         </Text>
         <Pressable
-        onPress={() => {
-          setCurrentDate((prev) => {
-            const next = new Date(prev.getFullYear(), prev.getMonth() + 1, 1);
-            setMonth(next.getMonth()+1);
-            setYear(next.getFullYear());
-            return next;
-          });
-          setSelectedDay(null);
-        }}
+          onPress={() => {
+            setCurrentDate((prev) => {
+              const next = new Date(prev.getFullYear(), prev.getMonth() + 1, 1);
+              setMonth(next.getMonth()+1);
+              setYear(next.getFullYear());
+              return next;
+            });
+            setSelectedDay(null);
+          }}
         >
         <Text style={styles.navText}>▶</Text>
         </Pressable>
@@ -164,8 +164,7 @@ export default function Calendar() {
           </View>
         ))}
       </View>
-      <PopUpView selectedDate={year + '-' + month + '-' + selectedDay?.day} yPos={yPos} onClose={closePopupView}>
-        <Text style={{ fontSize: 24, color: "black" }}>THIS IS THE TASK VIEW FOR MONTH {month}, DAY {selectedDay?.day}, YEAR {year}</Text>
+      <PopUpView selectedDate={year + '-' + month + '-' + `${selectedDay?.day && selectedDay?.day > 9 ? '' : '0'}` + selectedDay?.day} yPos={yPos} onClose={closePopupView}>
       </PopUpView>
     </SafeAreaView>
   );
