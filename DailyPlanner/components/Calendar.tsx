@@ -10,6 +10,8 @@ const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function Calendar() {
   const insets = useSafeAreaInsets();
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [month, setMonth] = useState<number>(currentDate.getMonth()+1);
+  const [year, setYear] = useState<number>(currentDate.getFullYear());
   const [selectedDay, setSelectedDay] = useState<{ day: number; monthOffset: number } | null>(
     null
   );
@@ -61,7 +63,7 @@ export default function Calendar() {
 
   function openDay(d: { day: number; inMonth: boolean }) {
     setSelectedDay({ day: d.day, monthOffset: d.inMonth ? 0 : -1 });
-    console.log('clicked on day', d.day);  
+    openPopupView(); 
   }
 
   // Popup View
@@ -84,28 +86,41 @@ export default function Calendar() {
   }
 
   return (
-    <>
-      <Pressable style={{ flex: 1, alignContent: "center", justifyContent: "center"}} onPress={openPopupView}>
-        <Text>Click me!</Text>
-      </Pressable>
-      <PopUpView yPos={yPos} onClose={closePopupView}>
-        <Text style={{ fontSize: 24, color: "black" }}>THIS IS A CHILD</Text>
-      </PopUpView>
-    </>
-  );
-
-  return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <View style={styles.container}>
-        {/* Month navigation */}
-        <View style={styles.nav}>
-          <Text style={styles.navText}>◀</Text>
-          <Text style={styles.monthText}>
-            {currentDate.toLocaleString("default", { month: "long" })}{" "}
-            {currentDate.getFullYear()}
-          </Text>
-          <Text style={styles.navText}>▶</Text>
-        </View>
+      {/* Month navigation */}
+      <View style={styles.nav}>
+        <Pressable
+        onPress={() => {
+          setCurrentDate((prev) => {
+            const next = new Date(prev.getFullYear(), prev.getMonth() - 1, 1);
+            setMonth(next.getMonth()+1);
+            setYear(next.getFullYear());
+            return next;
+          });
+          setSelectedDay(null);
+        }}
+        >
+        <Text style={styles.navText}>◀</Text>
+        </Pressable>
+        <Text style={styles.monthText}>
+        {currentDate.toLocaleString("default", { month: "long" })}{" "}
+        {currentDate.getFullYear()}
+        </Text>
+        <Pressable
+        onPress={() => {
+          setCurrentDate((prev) => {
+            const next = new Date(prev.getFullYear(), prev.getMonth() + 1, 1);
+            setMonth(next.getMonth()+1);
+            setYear(next.getFullYear());
+            return next;
+          });
+          setSelectedDay(null);
+        }}
+        >
+        <Text style={styles.navText}>▶</Text>
+        </Pressable>
+      </View>
 
         {/* Days of week header */}
         <View style={styles.weekHeader}>
@@ -149,6 +164,9 @@ export default function Calendar() {
           </View>
         ))}
       </View>
+      <PopUpView selectedDate={year + '-' + month + '-' + selectedDay?.day} yPos={yPos} onClose={closePopupView}>
+        <Text style={{ fontSize: 24, color: "black" }}>THIS IS THE TASK VIEW FOR MONTH {month}, DAY {selectedDay?.day}, YEAR {year}</Text>
+      </PopUpView>
     </SafeAreaView>
   );
 }
